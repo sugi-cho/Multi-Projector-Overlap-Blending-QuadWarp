@@ -111,6 +111,8 @@ public class ProjectionController : MonoBehaviour
         public Vector2[] quadWarpProps;
         public float gamma = 2.2f;
 
+        int editingQuadWarpIdx;
+
         public override void OnGUIFunc()
         {
             numX = (int)FloatField("num horizonal", numX);
@@ -187,11 +189,31 @@ public class ProjectionController : MonoBehaviour
         void QuadWarpPropField()
         {
             CenterLabel("---Quad Warp Props---");
+            GUILayout.BeginVertical();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("select projector");
+            GUILayout.FlexibleSpace();
+
+            var titles = new string[numX * numY];
             for (var y = 0; y < numY; y++)
                 for (var x = 0; x < numX; x++)
                 {
+                    var i = numX * (numY - 1 - y) + x;
+                    titles[i] = string.Format("QuadWarp({0}-{1})", x, y);
+                }
+            editingQuadWarpIdx = GUILayout.SelectionGrid(editingQuadWarpIdx, titles, numX);
+
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+
+            for (var y = numY - 1; y > -1; y--)
+                for (var x = 0; x < numX; x++)
+                {
+                    var i = numX * (numY - 1 - y) + x;
+                    if (i != editingQuadWarpIdx)
+                        continue;
+
                     CenterLabel(string.Format("QuadWarp({0}-{1})", x, y));
-                    var i = numX * y + x;
                     GUILayout.BeginHorizontal();
                     quadWarpProps[4 * i + 2] = Vector2Field("UpperLeft:", quadWarpProps[4 * i + 2]);
                     quadWarpProps[4 * i + 3] = Vector2Field("UpperRight:", quadWarpProps[4 * i + 3]);
@@ -216,8 +238,11 @@ public class ProjectionController : MonoBehaviour
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(label);
+            GUILayout.FlexibleSpace();
+            GUILayout.BeginHorizontal(GUILayout.MaxWidth(300f));
             vec2.x = FloatField("", vec2.x);
             vec2.y = FloatField("", vec2.y);
+            GUILayout.EndHorizontal();
             GUILayout.EndHorizontal();
             return vec2;
         }
