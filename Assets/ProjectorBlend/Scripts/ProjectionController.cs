@@ -206,12 +206,15 @@ public class ProjectionController : MonoBehaviour
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
 
-            for (var y = numY - 1; y > -1; y--)
+            for (var y = 0; y < numY; y++)
                 for (var x = 0; x < numX; x++)
                 {
-                    var i = numX * (numY - 1 - y) + x;
+                    var revY = numY - y - 1;
+                    var i = numX * revY + x;
                     if (i != editingQuadWarpIdx)
                         continue;
+                    i = numX * y + x;
+                    //画面の並びに合わせるため、無理やり。（左下が、0,0）
 
                     CenterLabel(string.Format("QuadWarp({0}-{1})", x, y));
                     GUILayout.BeginHorizontal();
